@@ -2,7 +2,7 @@
 const byte piezoPin = 6;
 
 // piezo frequency
-const unsigned int feq[5] = {0, 262, 330, 392, 523};
+const unsigned int feq[5] = {0, 261, 349, 440, 523};
 
 void setup() {
   // leds
