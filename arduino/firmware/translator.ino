@@ -6,6 +6,18 @@ bool lastYellow = HIGH;
 bool lastRed = HIGH;
 bool lastBlue = HIGH;
 
+unsigned long greenPressStart = 0;
+bool greenPressed = false;
+
+unsigned long yellowPressStart = 0;
+bool yellowPressed = false;
+
+unsigned long redPressStart = 0;
+bool redPressed = false;
+
+unsigned long bluePressStart = 0;
+bool bluePressed = false;
+
 void setup() {
   // leds
   pinMode(2, OUTPUT); // green
@@ -23,8 +35,6 @@ void setup() {
   pinMode(piezoPin, OUTPUT);
 
   Serial.begin(9600);
-
-  startupSound();  // Play startup sound once at boot
 }
 
 void loop() {
@@ -36,47 +46,73 @@ void loop() {
   if (green == LOW) {
     digitalWrite(2, HIGH);
     if (lastGreen == HIGH) {
+      greenPressStart = millis();
+      greenPressed = true;
       greenTune();
-      delay(50);  // small debounce delay
+      delay(50);
     }
+
+    unsigned long pressDuration = millis() - greenPressStart;
+
   } else {
     digitalWrite(2, LOW);
+    greenPressed = false;
   }
 
   if (yellow == LOW) {
     digitalWrite(3, HIGH);
     if (lastYellow == HIGH) {
+      yellowPressStart = millis();
+      yellowPressed = true;
       yellowTune();
       delay(50);
     }
+
+    unsigned long pressDuration = millis() - yellowPressStart;
+
   } else {
     digitalWrite(3, LOW);
+    yellowPressed = false;
   }
 
   if (red == LOW) {
     digitalWrite(4, HIGH);
     if (lastRed == HIGH) {
+      redPressStart = millis();
+      redPressed = true;
       redTune();
       delay(50);
     }
+
+    unsigned long pressDuration = millis() - redPressStart;
+
   } else {
     digitalWrite(4, LOW);
+    redPressed = false;
   }
 
   if (blue == LOW) {
     digitalWrite(5, HIGH);
     if (lastBlue == HIGH) {
+      bluePressStart = millis();
+      bluePressed = true;
       blueTune();
       delay(50);
     }
+
+    unsigned long pressDuration = millis() - bluePressStart;
+
   } else {
     digitalWrite(5, LOW);
+    bluePressed = false;
   }
 
   lastGreen = green;
   lastYellow = yellow;
   lastRed = red;
   lastBlue = blue;
+
+  delay(30);
 }
 
 // two-tone tunes for each color
