@@ -140,7 +140,7 @@ fun MainScreen(onPlaySound: (String) -> Unit) {
             feelings.forEach { (feeling, value) ->
                 FeelingButton(
                     feeling = feeling,
-                    emoji = feelingEmojis[feeling] ?: "",
+                    emoji = "",
                     progress = value,
                     onValueChange = { newValue -> feelings[feeling] = newValue },
                     onPlaySound = { onPlaySound(feeling) }
@@ -184,10 +184,10 @@ fun getOneEmoji(feelings: Map<String, Float>): String {
 
     if (top2 == null || top1.second - top2.second >= 1f) {
         return when (top1.first) {
-            "Happy" -> "😊"
-            "Angry" -> "😡"
-            "Calm" -> "😌"
-            "Sad" -> "😢"
+            "Happy" -> ""
+            "Angry" -> ""
+            "Calm" -> ""
+            "Sad" -> ""
             else -> "🤔"
         }
     }
