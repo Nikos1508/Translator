@@ -1,5 +1,8 @@
 const byte piezoPin = 6;
 
+// System startup flag
+bool systemStarted = false;
+
 // store previous button states
 bool lastGreen = HIGH;
 bool lastYellow = HIGH;
@@ -17,6 +20,23 @@ bool redPressed = false;
 
 unsigned long bluePressStart = 0;
 bool bluePressed = false;
+
+// Function to round press duration to 1, 2, 3, 4, or 5 seconds
+int roundPressTime(unsigned long duration) {
+  float seconds = duration / 1000.0;
+  
+  if (seconds < 1.5) {
+    return 1;
+  } else if (seconds < 2.5) {
+    return 2;
+  } else if (seconds < 3.5) {
+    return 3;
+  } else if (seconds < 4.5) {
+    return 4;
+  } else {
+    return 5;
+  }
+}
 
 void setup() {
   // leds
@@ -38,11 +58,25 @@ void setup() {
 }
 
 void loop() {
+  // Read buttons
   bool green = digitalRead(8);
   bool yellow = digitalRead(9);
   bool red = digitalRead(10);
   bool blue = digitalRead(11);
+  
+  // Check if system needs to be started
+  if (!systemStarted) {
+    if (green == LOW || yellow == LOW || red == LOW || blue == LOW) {
+      startupSound();
+      systemStarted = true;
+      delay(500);
+      return;
+    }
+    return;
+  }
 
+  // Green button
+  static unsigned long greenPressDuration = 0;
   if (green == LOW) {
     digitalWrite(2, HIGH);
     if (lastGreen == HIGH) {
@@ -51,14 +85,25 @@ void loop() {
       greenTune();
       delay(50);
     }
-
-    unsigned long pressDuration = millis() - greenPressStart;
-
+    greenPressDuration = millis() - greenPressStart;
   } else {
     digitalWrite(2, LOW);
+    if (greenPressed && lastGreen == LOW) {
+      int roundedTime = roundPressTime(greenPressDuration);
+      Serial.print("Green button: ");
+      Serial.print(roundedTime);
+      Serial.println(" second(s)");
+      
+      if (roundedTime == 5) {
+        oppositeTune();
+      }
+    }
     greenPressed = false;
+    greenPressDuration = 0;
   }
 
+  // Yellow button
+  static unsigned long yellowPressDuration = 0;
   if (yellow == LOW) {
     digitalWrite(3, HIGH);
     if (lastYellow == HIGH) {
@@ -67,14 +112,25 @@ void loop() {
       yellowTune();
       delay(50);
     }
-
-    unsigned long pressDuration = millis() - yellowPressStart;
-
+    yellowPressDuration = millis() - yellowPressStart;
   } else {
     digitalWrite(3, LOW);
+    if (yellowPressed && lastYellow == LOW) {
+      int roundedTime = roundPressTime(yellowPressDuration);
+      Serial.print("Yellow button: ");
+      Serial.print(roundedTime);
+      Serial.println(" second(s)");
+      
+      if (roundedTime == 5) {
+        oppositeTune();
+      }
+    }
     yellowPressed = false;
+    yellowPressDuration = 0;
   }
 
+  // Red button
+  static unsigned long redPressDuration = 0;
   if (red == LOW) {
     digitalWrite(4, HIGH);
     if (lastRed == HIGH) {
@@ -83,14 +139,25 @@ void loop() {
       redTune();
       delay(50);
     }
-
-    unsigned long pressDuration = millis() - redPressStart;
-
+    redPressDuration = millis() - redPressStart;
   } else {
     digitalWrite(4, LOW);
+    if (redPressed && lastRed == LOW) {
+      int roundedTime = roundPressTime(redPressDuration);
+      Serial.print("Red button: ");
+      Serial.print(roundedTime);
+      Serial.println(" second(s)");
+      
+      if (roundedTime == 5) {
+        oppositeTune();
+      }
+    }
     redPressed = false;
+    redPressDuration = 0;
   }
 
+  // Blue button
+  static unsigned long bluePressDuration = 0;
   if (blue == LOW) {
     digitalWrite(5, HIGH);
     if (lastBlue == HIGH) {
@@ -99,14 +166,24 @@ void loop() {
       blueTune();
       delay(50);
     }
-
-    unsigned long pressDuration = millis() - bluePressStart;
-
+    bluePressDuration = millis() - bluePressStart;
   } else {
     digitalWrite(5, LOW);
+    if (bluePressed && lastBlue == LOW) {
+      int roundedTime = roundPressTime(bluePressDuration);
+      Serial.print("Blue button: ");
+      Serial.print(roundedTime);
+      Serial.println(" second(s)");
+      
+      if (roundedTime == 5) {
+        oppositeTune();
+      }
+    }
     bluePressed = false;
+    bluePressDuration = 0;
   }
 
+  // Update last button states
   lastGreen = green;
   lastYellow = yellow;
   lastRed = red;
@@ -159,3 +236,15 @@ void startupSound() {
   delay(300);
   noTone(piezoPin);
 }
+
+void oppositeTune() {
+  tone(piezoPin, 523, 300);  // C5
+  delay(300);
+  tone(piezoPin, 784, 300);  // G5
+  delay(300);
+  tone(piezoPin, 1046, 600); // C6 (octave up)
+  delay(600);
+  noTone(piezoPin);
+}
+
+
