@@ -170,7 +170,7 @@ fun getOneEmoji(feelings: Map<String, Float>): String {
     val s = feelings["Sad"] ?: 0f
 
     val total = h + a + c + s
-    if (total < 1f) return "🤔"
+    if (total == 0f) return "🤔"
 
     val sorted = listOf(
         "Happy" to h,
@@ -184,25 +184,26 @@ fun getOneEmoji(feelings: Map<String, Float>): String {
 
     if (top2 == null || top1.second - top2.second >= 1f) {
         return when (top1.first) {
-            "Happy" -> ""
-            "Angry" -> ""
-            "Calm" -> ""
-            "Sad" -> ""
+            "Happy" -> "😊"
+            "Angry" -> "😡"
+            "Calm" -> "😌"
+            "Sad" -> "😢"
             else -> "🤔"
         }
     }
 
-    val blend = when (setOf(top1.first, top2.first)) {
+    return when (setOf(top1.first, top2.first)) {
         setOf("Happy", "Calm") -> "😇"
         setOf("Happy", "Angry") -> "🤪"
         setOf("Happy", "Sad") -> "🥲"
         setOf("Angry", "Calm") -> "😤"
         setOf("Angry", "Sad") -> "😖"
         setOf("Calm", "Sad") -> "😔"
+        setOf("Happy", "Sad") -> "😅"
+        setOf("Happy", "Calm") -> "😻"
+        setOf("Angry", "Happy") -> "😏"
         else -> "🤯"
     }
-
-    return blend
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
