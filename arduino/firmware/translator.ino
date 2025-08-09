@@ -18,50 +18,41 @@ void setup() {
   pinMode(11, INPUT_PULLUP); // blue
 
   // buzzer
-  pinMode(6, OUTPUT);
+  pinMode(piezoPin, OUTPUT);
 
   Serial.begin(9600);
 }
 
-int currentTone = 0;
-
 void loop() {
-  int newTone = 0;
-
   if (digitalRead(8) == LOW) {
-    digitalWrite(2, HIGH); // green led on
-    newTone = 1;
-  } else {
-    digitalWrite(2, LOW);  // green led off
+    digitalWrite(2, HIGH);
+    tone(piezoPin, feq[1]);
+    delay(100);
+    noTone(piezoPin);
+    digitalWrite(2, LOW);
   }
 
   if (digitalRead(9) == LOW) {
-    digitalWrite(3, HIGH); // yellow led on
-    if (newTone == 0) newTone = 2;
-  } else {
-    digitalWrite(3, LOW);  // yellow led off
+    digitalWrite(3, HIGH);
+    tone(piezoPin, feq[2]);
+    delay(100);
+    noTone(piezoPin);
+    digitalWrite(3, LOW);
   }
 
   if (digitalRead(10) == LOW) {
-    digitalWrite(4, HIGH); // red led on
-    if (newTone == 0) newTone = 3;
-  } else {
-    digitalWrite(4, LOW);  // red led off
+    digitalWrite(4, HIGH);
+    tone(piezoPin, feq[3]);
+    delay(100);
+    noTone(piezoPin);
+    digitalWrite(4, LOW);
   }
 
   if (digitalRead(11) == LOW) {
-    digitalWrite(5, HIGH); // blue led on
-    if (newTone == 0) newTone = 4;
-  } else {
-    digitalWrite(5, LOW);  // blue led off
-  }
-
-  if (newTone != currentTone) {
-    if (newTone == 0) {
-      noTone(piezoPin);
-    } else {
-      tone(piezoPin, feq[newTone]);
-    }
-    currentTone = newTone;
+    digitalWrite(5, HIGH);
+    tone(piezoPin, feq[4]);
+    delay(100);
+    noTone(piezoPin);
+    digitalWrite(5, LOW);
   }
 }
